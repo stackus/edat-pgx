@@ -18,9 +18,9 @@
     eventStore := edatpgx.NewEventStore(client)
 
 
-## Prerequisities
+## Prerequisites
 
-Go 1.15
+Go 1.16
 
 ## Features
 
@@ -28,11 +28,12 @@ Stores accept `*pgx.Conn`, `*pgxpool.Pool`, `pgx.Tx` and `edatpgx.Client` for cl
 
 - Session Client `NewSessionClient()`
 - Aggregate Event Store `NewEventStore(client, ...options)`
-- Outbox Message Store `NewMessageStore(client, ....options)`
+- Outbox Message Store and Producer `NewMessageStore(client, ....options)`
 - Saga Instance Store `NewSagaInstanceStore(client, ...options)`
 - Aggregate Snapshot Store `NewSnapshotStore(client, ...options)`
 - Message Receiver Session Middleware `ReceiverSessionMiddleware(*pgxpool.Pool, log.Logger)`
-- Web Session Middleware `WebSessionMiddleware(*pgxpool.Pool, log.Logger)`
+- Web Request Session Middleware `WebSessionMiddleware(*pgxpool.Pool, log.Logger)`
+- Grpc Request Session (Unary) Interceptor `RpcSessionUnaryMiddleware(*pgxpool.Pool, log.Logger)`
 
 ## TODOs
 
@@ -45,4 +46,5 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 Please make sure to update tests as appropriate.
 
 ## License
-[MIT](https://github.com/stackus/edat/LICENSE)
+
+MIT
