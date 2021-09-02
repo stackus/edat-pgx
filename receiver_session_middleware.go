@@ -11,14 +11,20 @@ import (
 	"github.com/stackus/edat/msg"
 )
 
-func ReceiverSessionMiddleware(conn *pgxpool.Pool, logger log.Logger) func(msg.MessageReceiver) msg.MessageReceiver {
+func ReceiverSessionMiddleware(conn *pgxpool.Pool, options ...SessionMiddlewareOption) func(msg.MessageReceiver) msg.MessageReceiver {
+	cfg := NewSessionMiddlewareConfig()
+
+	for _, option := range options {
+		option.configureSessionMiddleware(cfg)
+	}
+
 	return func(next msg.MessageReceiver) msg.MessageReceiver {
 		return msg.ReceiveMessageFunc(func(ctx context.Context, message msg.Message) (err error) {
 			var tx pgx.Tx
 
 			tx, err = conn.Begin(ctx)
 			if err != nil {
-				logger.Error("error while starting the request transaction", log.Error(err))
+				cfg.logger.Error("error while starting the request transaction", log.Error(err))
 				return fmt.Errorf("failed to start transaction: %s", err.Error())
 			}
 
@@ -30,18 +36,18 @@ func ReceiverSessionMiddleware(conn *pgxpool.Pool, logger log.Logger) func(msg.M
 				case p != nil:
 					txErr := tx.Rollback(ctx)
 					if txErr != nil {
-						logger.Error("error while rolling back the message receiver transaction during panic", log.Error(txErr))
+						cfg.logger.Error("error while rolling back the message receiver transaction during panic", log.Error(txErr))
 					}
 					panic(p)
 				case err != nil:
 					txErr := tx.Rollback(ctx)
 					if txErr != nil {
-						logger.Error("error while rolling back the message receiver transaction", log.Error(txErr))
+						cfg.logger.Error("error while rolling back the message receiver transaction", log.Error(txErr))
 					}
 				default:
 					txErr := tx.Commit(ctx)
 					if txErr != nil {
-						logger.Error("error while committing the message receiver transaction", log.Error(txErr))
+						cfg.logger.Error("error while committing the message receiver transaction", log.Error(txErr))
 					}
 				}
 			}()

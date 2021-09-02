@@ -24,7 +24,7 @@ const (
     PRIMARY KEY (entity_name, entity_id, event_version)
 )`
 
-	CreateMessagesTableSQL = `CREATE TABLE messages (
+	CreateMessagesTableSQL = `CREATE TABLE %s (
     message_id  text        NOT NULL,
     destination text        NOT NULL,
     payload     bytea       NOT NULL,
@@ -34,8 +34,8 @@ const (
     modified_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (message_id)
 )`
-	CreateMessagesUnpublishedIndexSQL = `CREATE INDEX unpublished_idx ON messages (created_at) WHERE not published`
-	CreateMessagesPublishedIndexSQL   = `CREATE INDEX published_idx ON messages (modified_at) WHERE published`
+	CreateMessagesUnpublishedIndexSQL = `CREATE INDEX unpublished_idx ON %s (created_at) WHERE not published`
+	CreateMessagesPublishedIndexSQL   = `CREATE INDEX published_idx ON %s (modified_at) WHERE published`
 
 	CreateSagaInstancesTableSQL = `CREATE TABLE %s (
     saga_name      text        NOT NULL,

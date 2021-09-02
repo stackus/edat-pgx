@@ -9,6 +9,10 @@ import (
 	"github.com/stackus/edat/saga"
 )
 
+type SagaInstanceStoreOption interface {
+	configureSagaInstanceStore(*SagaInstanceStore)
+}
+
 type SagaInstanceStore struct {
 	tableName string
 	client    Client
@@ -25,7 +29,7 @@ func NewSagaInstanceStore(client Client, options ...SagaInstanceStoreOption) *Sa
 	}
 
 	for _, option := range options {
-		option(s)
+		option.configureSagaInstanceStore(s)
 	}
 
 	return s

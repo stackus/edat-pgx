@@ -12,6 +12,10 @@ import (
 	"github.com/stackus/edat/log"
 )
 
+type EventStoreOption interface {
+	configureEventStore(*EventStore)
+}
+
 type EventStore struct {
 	tableName string
 	client    Client
@@ -28,7 +32,7 @@ func NewEventStore(client Client, options ...EventStoreOption) *EventStore {
 	}
 
 	for _, option := range options {
-		option(store)
+		option.configureEventStore(store)
 	}
 
 	return store

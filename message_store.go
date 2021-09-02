@@ -15,6 +15,10 @@ import (
 	"github.com/stackus/edat/outbox"
 )
 
+type MessageStoreOption interface {
+	configureMessageStore(*MessageStore)
+}
+
 type MessageStore struct {
 	tableName string
 	client    Client
@@ -32,7 +36,7 @@ func NewMessageStore(client Client, options ...MessageStoreOption) *MessageStore
 	}
 
 	for _, option := range options {
-		option(s)
+		option.configureMessageStore(s)
 	}
 
 	return s

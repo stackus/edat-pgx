@@ -12,6 +12,10 @@ import (
 	"github.com/stackus/edat/log"
 )
 
+type SnapshotStoreOption interface {
+	configureSnapshotStore(*SnapshotStore)
+}
+
 type SnapshotStore struct {
 	tableName string
 	client    Client
@@ -30,7 +34,7 @@ func NewSnapshotStore(client Client, options ...SnapshotStoreOption) es.Aggregat
 	}
 
 	for _, option := range options {
-		option(s)
+		option.configureSnapshotStore(s)
 	}
 
 	return func(next es.AggregateRootStore) es.AggregateRootStore {
@@ -79,7 +83,7 @@ func (s *SnapshotStore) Save(ctx context.Context, root *es.AggregateRoot) error 
 		return nil
 	}
 
-	snapshot, err := root.Aggregate().ToSnapshot()
+	snapshot, err := root.ToSnapshot()
 	if err != nil {
 		return err
 	}
@@ -99,4 +103,17 @@ func (s *SnapshotStore) Save(ctx context.Context, root *es.AggregateRoot) error 
 	}
 
 	return nil
+}
+
+type StrategyOption struct {
+	es.SnapshotStrategy
+}
+
+// WithStrategy sets the snapshotting strategy for SnapshotStore
+func WithStrategy(strategy es.SnapshotStrategy) SnapshotStoreOption {
+	return StrategyOption{strategy}
+}
+
+func (o StrategyOption) configureSnapshotStore(store *SnapshotStore) {
+	store.strategy = o
 }

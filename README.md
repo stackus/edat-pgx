@@ -17,14 +17,14 @@
     client := edatpgx.NewSessionClient()
     eventStore := edatpgx.NewEventStore(client)
 
-
 ## Prerequisites
 
 Go 1.16
 
 ## Features
 
-Stores accept `*pgx.Conn`, `*pgxpool.Pool`, `pgx.Tx` and `edatpgx.Client` for clients. Middleware will accept `*pgxpool.Pool` only.
+Stores accept `*pgx.Conn`, `*pgxpool.Pool`, `pgx.Tx` and `edatpgx.Client` for clients. Middleware will
+accept `*pgxpool.Pool` only.
 
 - Session Client `NewSessionClient()`
 - Aggregate Event Store `NewEventStore(client, ...options)`
@@ -41,6 +41,7 @@ Stores accept `*pgx.Conn`, `*pgxpool.Pool`, `pgx.Tx` and `edatpgx.Client` for cl
 - Tests, tests, and more tests
 
 ## Contributing
+
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 Please make sure to update tests as appropriate.
